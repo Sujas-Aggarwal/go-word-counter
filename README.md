@@ -1,1 +1,1 @@
-Counter check with - find . -type f -exec wc -w {} + | tail -n1
+Counter check with - find "./demo-directory" -type f -exec wc -m {} + | tail -n1
