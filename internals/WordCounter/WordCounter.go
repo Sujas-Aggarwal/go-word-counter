@@ -4,10 +4,8 @@ import (
 	"fmt"
 	"os"
 	"runtime/pprof"
+	"sync"
 )
-
-// so basically what we need to do is, we can first get the list of all the files there are and then distribute the files among workers and then check the difference
-// so what we can do is, first we can get the arguement of the directory from user provided and then recursively, get all the files inside to our list
 
 func listFiles(files *[]string, path string) {
 	dirs, err := os.ReadDir(path)
@@ -17,7 +15,6 @@ func listFiles(files *[]string, path string) {
 	}
 	for _, dir := range dirs {
 		if dir.IsDir() {
-			// then we would need to redo recursively
 			listFiles(files, fmt.Sprint(path, "/", dir.Name()))
 		} else {
 			file_path := fmt.Sprint(path, "/", dir.Name())
@@ -26,12 +23,14 @@ func listFiles(files *[]string, path string) {
 	}
 }
 
-func getWordCount(path string) int {
+func getWordCount(path string, results chan<- int) {
 	content, err := os.ReadFile(path)
 	if err != nil {
 		println("Error Reading File Content of ", err)
+		results <- 0
+		return
 	}
-	return len(content)
+	results <- len(content)
 }
 
 func WordCount(path string) int {
@@ -39,11 +38,33 @@ func WordCount(path string) int {
 	defer f.Close()
 	pprof.StartCPUProfile(f)
 	defer pprof.StopCPUProfile()
+
 	wc := 0
+	var wg sync.WaitGroup
 	files := []string{}
+
+	// Find all files first
 	listFiles(&files, path)
+
+	results := make(chan int, len(files))
+
 	for _, file := range files {
-		wc += getWordCount(file)
+		filePath := file
+		wg.Go(func() {
+			getWordCount(filePath, results)
+		})
 	}
+
+	// This monitors the WaitGroup and closes the channel when workers are done
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+
+	// Read from channel until it's closed
+	for count := range results {
+		wc += count
+	}
+
 	return wc
 }
