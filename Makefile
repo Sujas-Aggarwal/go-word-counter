@@ -9,3 +9,6 @@ build-run: build
 
 seed: build
 	./bin/dummy-data-creator
+
+test:
+	go test -v ./...
