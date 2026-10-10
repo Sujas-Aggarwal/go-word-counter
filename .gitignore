@@ -2,3 +2,4 @@ demo-directory/*
 ./demo-directory
 bin/*
 ./bin
+*.prof

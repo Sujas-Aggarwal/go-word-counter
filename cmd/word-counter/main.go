@@ -2,10 +2,16 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	wordcounter "github.com/Sujas-Aggarwal/go-word-counter/internals/WordCounter"
 )
 
 func main() {
-	fmt.Println("Total Word Count -", wordcounter.WordCount("./demo-directory"))
+	args := os.Args
+	path := "./demo-directory"
+	if len(args) > 1 {
+		path = args[1]
+	}
+	fmt.Println("Total Word Count -", wordcounter.WordCount(path))
 }

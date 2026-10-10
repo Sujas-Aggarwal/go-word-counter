@@ -3,6 +3,7 @@ package wordcounter
 import (
 	"fmt"
 	"os"
+	"runtime/pprof"
 )
 
 // so basically what we need to do is, we can first get the list of all the files there are and then distribute the files among workers and then check the difference
@@ -12,6 +13,7 @@ func listFiles(files *[]string, path string) {
 	dirs, err := os.ReadDir(path)
 	if err != nil {
 		fmt.Println("Error Reading Directory -", err)
+		os.Exit(1)
 	}
 	for _, dir := range dirs {
 		if dir.IsDir() {
@@ -33,6 +35,10 @@ func getWordCount(path string) int {
 }
 
 func WordCount(path string) int {
+	f, _ := os.Create("./cpu.prof")
+	defer f.Close()
+	pprof.StartCPUProfile(f)
+	defer pprof.StopCPUProfile()
 	wc := 0
 	files := []string{}
 	listFiles(&files, path)
