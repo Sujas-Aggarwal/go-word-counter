@@ -1,6 +1,6 @@
 package main
 
-import datacreator "github.com/Sujas-Aggarwal/go-word-counter/internals"
+import datacreator "github.com/Sujas-Aggarwal/go-word-counter/internals/DataCreator"
 
 var config datacreator.Config = datacreator.Config{
 	MAX_DEPTH:            3,
@@ -10,6 +10,5 @@ var config datacreator.Config = datacreator.Config{
 	PATH:                 "./demo-directory"}
 
 func main() {
-
 	datacreator.Generate(config)
 }

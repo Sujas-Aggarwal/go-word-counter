@@ -1,0 +1,1 @@
+Counter check with - find . -type f -exec wc -w {} + | tail -n1

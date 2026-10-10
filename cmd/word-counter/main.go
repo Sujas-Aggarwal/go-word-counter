@@ -1,7 +1,11 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	wordcounter "github.com/Sujas-Aggarwal/go-word-counter/internals/WordCounter"
+)
 
 func main() {
-	fmt.Println("Success")
+	fmt.Println("Total Word Count -", wordcounter.WordCount("./demo-directory"))
 }
